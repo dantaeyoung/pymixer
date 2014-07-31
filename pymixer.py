@@ -1,7 +1,7 @@
 import sys
 import random
 from glob import glob
-from pydub import AudioSegment
+import pydub
 import fnmatch
 import os
 
@@ -23,7 +23,7 @@ for root, dirnames, filenames in os.walk(MP3DIR):
 		mp3filelist.append(os.path.join(root, filename))
 
 
-randsong = AudioSegment.empty()
+randsong = pydub.AudioSegment.empty()
 
 for i in xrange(int(DESIRED_LENGTH / SLICE_DURATION)):
 
@@ -33,7 +33,7 @@ for i in xrange(int(DESIRED_LENGTH / SLICE_DURATION)):
 
 	print "1. song picked:", thisfile, ", loading..."
 
-	thissong = AudioSegment.from_mp3(thisfile)
+	thissong = pydub.AudioSegment.from_mp3(thisfile)
 
 	thislen = len(thissong)
 
