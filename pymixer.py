@@ -1,16 +1,30 @@
+import sys
 import copy
 import random
 from glob import glob
 from pydub import AudioSegment
+import fnmatch
+import os
 
 mp3dir = "./mp3s/"
+librarydir = "/Users/provolot/Music/iTunes/iTunes Media/Music/"
+#/Users/provolot/Documents/github/pymixer
 # pydub does things in milliseconds
 slice_duration = 0.5 * 1000;
 segment_count = 50
 
+matches = []
+for root, dirnames, filenames in os.walk(librarydir):
+	print filenames
+	for filename in fnmatch.filter(filenames, '*.mp3'):
+		matches.append(os.path.join(root, filename))
+
+
+sys.exit(0)
 
 print "loading all songs"
 allsongs = []
+allsong
 for mp3_file in glob(mp3dir + "*.mp3"):
 	print "loading", mp3_file
 	allsongs.append(AudioSegment.from_mp3(mp3_file))
@@ -20,9 +34,9 @@ randsong = AudioSegment.empty()
 
 for i in xrange(segment_count):
 
+	thissong = random.choice(allsongs)
 	print "#pick a song"
 	#pick a song
-	thissong = random.choice(allsongs)
 	print "we picked", thissong
 
 	print "#get its length (in milliseconds)"
