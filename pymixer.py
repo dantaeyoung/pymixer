@@ -1,62 +1,60 @@
 import sys
-import copy
 import random
 from glob import glob
 from pydub import AudioSegment
 import fnmatch
 import os
 
-mp3dir = "./mp3s/"
-librarydir = "/Users/provolot/Music/iTunes/iTunes Media/Music/"
+MP3DIR = "./mp3s/"
+MP3DIR = "/Users/provolot/Music/iTunes/iTunes Media/Music/"
 #/Users/provolot/Documents/github/pymixer
 # pydub does things in milliseconds
-slice_duration = 0.5 * 1000;
-segment_count = 50
+SLICE_DURATION = 1 * 1000
+SEGMENT_COUNT = 50
+DESIRED_LENGTH = 30 * 1000
+CROSSFADE_LENGTH = 0.5 * 1000
+CROSSFADE = False
+OUTPUTFILE = "pymixer-mix.mp3"
 
-matches = []
-for root, dirnames, filenames in os.walk(librarydir):
+mp3filelist = []
+for root, dirnames, filenames in os.walk(MP3DIR):
 	print filenames
 	for filename in fnmatch.filter(filenames, '*.mp3'):
-		matches.append(os.path.join(root, filename))
+		mp3filelist.append(os.path.join(root, filename))
 
 
-sys.exit(0)
-
-print "loading all songs"
-allsongs = []
-allsong
-for mp3_file in glob(mp3dir + "*.mp3"):
-	print "loading", mp3_file
-	allsongs.append(AudioSegment.from_mp3(mp3_file))
-
-#randsong = None
 randsong = AudioSegment.empty()
 
-for i in xrange(segment_count):
+for i in xrange(int(DESIRED_LENGTH / SLICE_DURATION)):
 
-	thissong = random.choice(allsongs)
-	print "#pick a song"
-	#pick a song
-	print "we picked", thissong
+	print "=========="
 
-	print "#get its length (in milliseconds)"
-	#get its length (in milliseconds)
+	thisfile = random.choice(mp3filelist)
+
+	print "1. song picked:", thisfile, ", loading..."
+
+	thissong = AudioSegment.from_mp3(thisfile)
+
 	thislen = len(thissong)
-	print "len is", thislen
 
-	print "#get slice randomly"
-	#get slice randomly
-	slice_start = random.randrange(0, thislen - slice_duration)
-	print "slice is from", slice_start / 1000.0, "to", (slice_start + slice_duration) / 1000.0, "secs"
+	print "2. song loaded; length is", thislen, "(ms)"
 
-	print "#add random slice to total"
-	#add random slice to total
-	print "adding another song"
-	randsong += thissong[slice_start:(slice_start + slice_duration)]
+	slice_start = random.randrange(0, thislen - (SLICE_DURATION + CROSSFADE_LENGTH))
+	print "   random slice: from", slice_start / 1000.0, "s to", (slice_start + SLICE_DURATION) / 1000.0, "s"
 
-	print "this song is now", len(randsong) / 1000, "seconds"
+	print "3. adding random slice to total"
+	if (CROSSFADE):
+		if(len(randsong) > CROSSFADE_LENGTH):
+			randsong = randsong.append(thissong[slice_start:(slice_start + SLICE_DURATION + CROSSFADE_LENGTH)], CROSSFADE_LENGTH)
+		else:
+			randsong += thissong[slice_start:(slice_start + SLICE_DURATION)]
+	else:
+		randsong += thissong[slice_start:(slice_start + SLICE_DURATION)]
 
+	print "   this song is now", len(randsong) / 1000.0, "seconds"
 
-print "saving"
-# save the result
-randsong.export("./mixed_sounds.mp3", format="mp3")
+	del thissong
+
+print "saving.."
+
+randsong.export("./" + OUTPUTFILE, format="mp3")
