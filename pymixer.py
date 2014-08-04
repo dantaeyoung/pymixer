@@ -4,17 +4,20 @@ from glob import glob
 import pydub
 import fnmatch
 import os
+import time
 
 MP3DIR = "./mp3s/"
 MP3DIR = "/Users/provolot/Music/iTunes/iTunes Media/Music/"
 #/Users/provolot/Documents/github/pymixer
 # pydub does things in milliseconds
 SLICE_DURATION = 1 * 1000
-SEGMENT_COUNT = 50
-DESIRED_LENGTH = 30 * 1000
+DESIRED_LENGTH = 200 * 1000
 CROSSFADE_LENGTH = 0.5 * 1000
 CROSSFADE = False
-OUTPUTFILE = "pymixer-mix.mp3"
+#CROSSFADE = True
+#OUTPUTFILE = "pymixer-mix.mp3"
+OUTPUTFILE = time.strftime("%Y%m%d-%H%M%S") + "_pymixer-mix.mp3"
+
 
 mp3filelist = []
 for root, dirnames, filenames in os.walk(MP3DIR):
@@ -25,7 +28,12 @@ for root, dirnames, filenames in os.walk(MP3DIR):
 
 randsong = pydub.AudioSegment.empty()
 
-for i in xrange(int(DESIRED_LENGTH / SLICE_DURATION)):
+while True:
+
+	if(len(randsong)  >= DESIRED_LENGTH):
+		break
+
+	SLICE_DURATION = random.randrange(500, 2000)
 
 	print "=========="
 
@@ -40,7 +48,7 @@ for i in xrange(int(DESIRED_LENGTH / SLICE_DURATION)):
 	print "2. song loaded; length is", thislen, "(ms)"
 
 	slice_start = random.randrange(0, thislen - (SLICE_DURATION + CROSSFADE_LENGTH))
-	print "   random slice: from", slice_start / 1000.0, "s to", (slice_start + SLICE_DURATION) / 1000.0, "s"
+	print "   random slice", SLICE_DURATION / 1000.0, "secs long: from", slice_start / 1000.0, "s to", (slice_start + SLICE_DURATION) / 1000.0, "s"
 
 	print "3. adding random slice to total"
 	if (CROSSFADE):
