@@ -11,7 +11,7 @@ MP3DIR = "/Users/provolot/Music/iTunes/iTunes Media/Music/"
 #/Users/provolot/Documents/github/pymixer
 # pydub does things in milliseconds
 SLICE_DURATION = 1 * 1000
-DESIRED_LENGTH = 200 * 1000
+DESIRED_LENGTH = 20 * 1000
 CROSSFADE_LENGTH = 0.5 * 1000
 CROSSFADE = False
 #CROSSFADE = True
@@ -30,6 +30,7 @@ randsong = pydub.AudioSegment.empty()
 
 while True:
 
+	print len(randsong), DESIRED_LENGTH
 	if(len(randsong)  >= DESIRED_LENGTH):
 		break
 
